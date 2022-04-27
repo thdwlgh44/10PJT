@@ -86,7 +86,7 @@ public class ProductRestController {
 		return product;
 	}
 	
-	@RequestMapping( value="json/getProductList", method=RequestMethod.POST)
+	@RequestMapping( value="json/getProductList")
 	public Map getProductList(@RequestBody Search search) throws Exception {
 		
 		System.out.println("/product/getProductList : GET / POST");

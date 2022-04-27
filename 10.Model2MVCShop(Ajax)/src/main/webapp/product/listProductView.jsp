@@ -26,6 +26,7 @@
 
 <link rel="stylesheet" href="/css/admin.css" type="text/css">
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+
 <script type="text/javascript">
 	// 검색 | page 두가지 경우 모두 Form 전송 위해 JavaScript 이용
 	function fncGetUserList(currentPage) {//pagenavigation때문에 GetUserList로 명명
@@ -35,46 +36,28 @@
 		$("form").attr("method" , "POST").attr("action" , "/product/listProduct?menu=${menu}").submit();
 	}
 
-	//==> 추가된부분 : "검색" ,  prodName link  Event 연결 및 처리
 	 $(function() {
 		 
-		//==> 검색 Event 연결처리부분
-		//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
-		//==> 1 과 3 방법 조합 : $("tagName.className:filter함수") 사용함. 
 		 $( "td.ct_btn01:contains('검색')" ).on("click" , function() {
-			//Debug..
-			//alert(  $( "td.ct_btn01:contains('검색')" ).html() );
 			fncGetUserList(1);
 		});
 		
-		//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
-		//==> 3 과 1 방법 조합 : $(".className tagName:filter함수") 사용함.
 		$( ".ct_list_pop td:nth-child(3)" ).on("click" , function() {
-				
 			var prodNo = $(this).data("param");
-
-				if(${param.menu == 'manage'}) {
-					self.location ="/product/updateProductView?prodNo="+prodNo+"&menu=manage";
-				}else {
-					self.location ="/product/readProduct?prodNo="+prodNo+"&menu=search";
-				}
-				
+			if(${param.menu == 'manage'}) {	
+				self.location ="/product/updateProductView?prodNo="+prodNo+"&menu=manage";
+			} else {
 				$.ajax( 
 						{
-							url : "/product/json/getProudct/"+prodNo ,
-							method : "POST" ,
-							dataType : "json" ,
+							url : "/product/json/getProduct/"+prodNo ,
+							method : "GET",
+							dataType : "json",
 							headers : {
 								"Accept" : "application/json",
 								"Content-Type" : "application/json"
 							},
 							success : function(JSONData , status) {
 
-								//Debug...
-								//alert(status);
-								//Debug...
-								//alert("JSONData : \n"+JSONData);
-								
 								var displayValue = "<h3>"
 															+"상품번호 : "+JSONData.prodNo+"<br/>"
 															+"상품명 : "+JSONData.prodName+"<br/>"															
@@ -84,14 +67,12 @@
 															+"가  격 : "+JSONData.price+"<br/>"
 															+"등록일 : "+JSONData.regDate+"<br/>"
 															+"</h3>";
-								//Debug...									
-								//alert(displayValue);
 								$("h3").remove();
 								$( "#"+prodNo+"" ).html(displayValue);
-							}
-					});
-				
-		});
+				}
+			});
+		}
+	});
 		
 		//==> UI 수정 추가부분  :  userId LINK Event End User 에게 보일수 있도록 
 		$( ".ct_list_pop td:nth-child(3)" ).css("color" , "red");
@@ -108,7 +89,10 @@
 		//console.log ( $(".ct_list_pop:nth-child(5)" ).html() ); 
 		console.log ( $(".ct_list_pop:nth-child(6)" ).html() ); //==> ok
 		//console.log ( $(".ct_list_pop:nth-child(7)" ).html() ); 
-	});	
+	});
+	 
+	
+	 
 </script>
 </head> 
 
@@ -267,7 +251,8 @@
 					
 		</tr>
 		<tr>
-		<td colspan="11" bgcolor="D6D7D6" height="1"></td>
+		<!-- <td colspan="11" bgcolor="D6D7D6" height="1"></td> -->
+		<td id="${product.prodNo}" colspan="11" bgcolor="D6D7D6" height="1"></td>
 		</tr>
 	</c:forEach>
 </table>
