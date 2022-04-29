@@ -1,25 +1,8 @@
-<%@page import="java.util.HashMap"%>
+<%@ page import="java.util.HashMap"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%-- 
-<%@ page import="java.util.List"  %>
 
-<%@page import="com.model2.mvc.service.domain.Product"%>
-<%@ page import="com.model2.mvc.common.Search" %>
-<%@ page import="com.model2.mvc.common.Page"%>
-<%@ page import="com.model2.mvc.common.util.CommonUtil"%>
-
-<%
-	List<Product> list=(List<Product>)request.getAttribute("list");
-	Page resultPage=(Page)request.getAttribute("resultPage");
-
-	Search search = (Search)request.getAttribute("search");
-	String menu = request.getParameter("menu");
-	
-	String searchCondition = CommonUtil.null2str(search.getSearchCondition());
-	String searchKeyword = CommonUtil.null2str(search.getSearchKeyword());
-%> --%>
 <html>
 <head>
 <title>상품 목록조회</title>
@@ -35,14 +18,18 @@
 		//document.detailForm.submit();
 		$("form").attr("method" , "POST").attr("action" , "/product/listProduct?menu=${menu}").submit();
 	}
-
+	
+	// 검색버튼 클릭
 	 $(function() {
 		 
 		 $( "td.ct_btn01:contains('검색')" ).on("click" , function() {
 			fncGetUserList(1);
 		});
-		
-		$( ".ct_list_pop td:nth-child(3)" ).on("click" , function() {
+		 
+	//==============================================================================
+		//$( window ).scroll(function() {
+
+		$(".ct_list_pop td:nth-child(3)" ).on("click" , function() {
 			var prodNo = $(this).data("param");
 			if(${param.menu == 'manage'}) {	
 				self.location ="/product/updateProductView?prodNo="+prodNo+"&menu=manage";
@@ -65,7 +52,7 @@
 															+"상품상세정보 : "+JSONData.prodDetail+"<br/>"															
 															+"상품상세정보 : "+JSONData.manuDate+"<br/>"															
 															+"가  격 : "+JSONData.price+"<br/>"
-															+"등록일 : "+JSONData.regDate+"<br/>"
+															+"등록일 : "+JSONData.regDateString+"<br/>"
 															+"</h3>";
 								$("h3").remove();
 								$( "#"+prodNo+"" ).html(displayValue);
@@ -117,12 +104,6 @@
 				<c:if test="${name != 'manage'}">
 					상품 목록조회
 				</c:if>					
-					
-				<%-- if(menu.equals("manage")) {%>
-					상품 관리
-				<% } else if(menu.equals("search")) { %>
-					상품 목록조회
-				<% } --%>
 					</td>
 				</tr>
 			</table>
@@ -138,16 +119,10 @@
 	<tr>
 		<td align="right">
 			<select name="searchCondition" class="ct_input_g" style="width:80px">
-							<%-- /////////////////////// EL / JSTL 적용으로 주석 처리 ////////////////////////
-				<option value="0" <%= (searchCondition.equals("0") ? "selected" : "")%>>상품번호</option>
-				<option value="1" <%= (searchCondition.equals("1") ? "selected" : "")%>>상품명</option>
-				<option value="2" <%= (searchCondition.equals("2") ? "selected" : "")%>>상품가격</option>
-				/////////////////////// EL / JSTL 적용으로 주석 처리 //////////////////////// --%>
 				<option value="0"  ${ ! empty search.searchCondition && search.searchCondition==0 ? "selected" : "" }>상품번호</option>
 				<option value="1"  ${ ! empty search.searchCondition && search.searchCondition==1 ? "selected" : "" }>상품명</option>
 				<option value="2"  ${ ! empty search.searchCondition && search.searchCondition==2 ? "selected" : "" }>상품가격</option>
 			</select>
-			<%-- <input type="text" name="searchKeyword" value="<%= searchKeyword %>" --%>  
 			<input type="text" name="searchKeyword" 
 				value="${! empty search.searchKeyword ? search.searchKeyword : ""}"  
 				class="ct_input_g" style="width:200px; height:19px">
@@ -159,7 +134,6 @@
 						<img src="/images/ct_btnbg01.gif" width="17" height="23">
 					</td>
 					<td background="/images/ct_btnbg02.gif" class="ct_btn01" style="padding-top:3px;">
-						<!-- <a href="javascript:fncGetProductList('1');">검색</a> -->
 						검색
 					</td>
 					<td width="14" height="23">
@@ -194,39 +168,6 @@
 	<tr>
 		<td colspan="11" bgcolor="808285" height="1"></td>
 	</tr>
-	<%-- 	
-	<%
-		int no = list.size();
-		for(int i=0; i<list.size(); i++) {
-			Product product = list.get(i);
-	%> 
-	
-
-	<tr class="ct_list_pop">
-		<td align="center"><%= i + 1 %></td>
-		<td></td>
-		<td align="left">
-				<% if(menu.equals("manage")) {%>
-					<a href="/updateProductView.do?prodNo=<%=product.getProdNo() %>"><%=product.getProdName() %></a>
-				<% } else { %>
-					<a href="/getProduct.do?prodNo=<%=product.getProdNo() %>"><%=product.getProdName() %></a>
-				<% } %>
-		</td>
-		<td></td>
-		<td align="left"><%=product.getPrice() %></td>
-		<td></td>
-		<td align="left"><%=product.getRegDate() %></td>
-		<td></td>
-		<td align="left">
-		
-			판매중
-			
-		</td>	
-	</tr>
-	<tr>
-		<td colspan="11" bgcolor="D6D7D6" height="1"></td>
-	</tr>
-	<% } %> --%>
 	
 	<c:set var="i" value="0" />
 	<c:forEach var="product" items="${list}">
@@ -234,24 +175,13 @@
 		<tr class="ct_list_pop">
 			<td align="center">${ i }</td>
 			<td></td>
-			<td align="left" data-param="${product.prodNo}">
-					<!-- <a href="/product/updateProductView?prodNo=${product.prodNo}">${product.prodName}</a> -->
-					${product.prodName}
-					<!-- <a href="/product/readProduct?prodNo=${product.prodNo}">${product.prodName}</a> -->
-			<%-- if(menu.equals("manage")) {%>
-				<a href="/updateProductView.do?prodNo=${user.userId}%></a>
-			<% } else { %>
-				<a href="/getProduct.do?prodNo=${user.userId}%></a>
-			<% } --%>
-			</td>
+			<td align="left" data-param="${product.prodNo}">${product.prodName}</td>
 			<td></td>
 			<td align="left">${product.price}</td>
 			<td></td>
 			<td align="left">판매중</td>
-					
 		</tr>
 		<tr>
-		<!-- <td colspan="11" bgcolor="D6D7D6" height="1"></td> -->
 		<td id="${product.prodNo}" colspan="11" bgcolor="D6D7D6" height="1"></td>
 		</tr>
 	</c:forEach>
@@ -262,23 +192,6 @@
 	<tr>
 		<td align="center">
  			<input type="hidden" id="currentPage" name="currentPage" value=""/>
-			<%-- 
-			<% if( resultPage.getCurrentPage() <= resultPage.getPageUnit() ){ %>
-					◀ 이전
-			<% }else{ %>
-					<a href="javascript:fncGetProductList('<%=resultPage.getCurrentPage()-1%>')">◀ 이전</a>
-			<% } %>
-
-			<%	for(int i=resultPage.getBeginUnitPage(); i<= resultPage.getEndUnitPage() ;i++){	%>
-					<a href="javascript:fncGetProductList('<%=i %>');"><%=i %></a>
-			<% 	}  %>
-	
-			<% if( resultPage.getEndUnitPage() >= resultPage.getMaxPage() ){ %>
-					이후 ▶
-			<% }else{ %>
-					<a href="javascript:fncGetProductList('<%=resultPage.getEndUnitPage()+1%>')">이후 ▶</a>
-			<% } %>
-			--%>
 			
 			<jsp:include page="../common/pageNavigator.jsp"/>
 			
